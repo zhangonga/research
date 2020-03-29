@@ -23,6 +23,35 @@ public class luceneTest {
     @Test
     public void testSearch() throws IOException, ParseException {
         LuceneDemo luceneDemo = new LuceneDemo();
-        luceneDemo.search("title", "云计算");
+        //luceneDemo.search("title", "云计算");
+        luceneDemo.search("title", "title:云 OR title:云计算");
+        luceneDemo.search("title", "title:云 AND title:云计算");
+    }
+
+    @Test
+    public void testSearchAll() throws IOException, ParseException {
+        LuceneDemo luceneDemo = new LuceneDemo();
+        luceneDemo.matchAll();
+    }
+
+    @Test
+    public void testMultiField() throws IOException, ParseException {
+        LuceneDemo luceneDemo = new LuceneDemo();
+        String[] fields = {"author", "title"};
+        luceneDemo.multiFieldSearch("云计算", fields);
+    }
+
+    @Test
+    public void testBoolQuery() throws IOException, ParseException {
+        LuceneDemo luceneDemo = new LuceneDemo();
+        String[] fields = {"author", "title"};
+        String[] values = {"张三", "云"};
+        luceneDemo.boolQuery(fields, values);
+    }
+
+    @Test
+    public void testDelete() throws IOException, ParseException {
+        LuceneDemo luceneDemo = new LuceneDemo();
+        luceneDemo.delete("title", "云计算");
     }
 }
