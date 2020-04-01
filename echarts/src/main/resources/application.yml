@@ -1,0 +1,28 @@
+spring:
+  profiles:
+    active: dev
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+    encoding: UTF-8
+    servlet:
+      content-type: text/html
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+  resources:
+    static-locations: classpath:/static/
+
+#Tomcat
+server:
+  port: 8888
+  tomcat:
+    max-threads: 10
+    min-spare-threads: 10
+  servlet:
+    context-path: /echarts
+
+#LogBack
+logback:
+  level: INFO
