@@ -13,5 +13,6 @@
         <module>jvm</module>
         <module>lucene</module>
         <module>nucth</module>
+        <module>echarts</module>
     </modules>
 </project>
