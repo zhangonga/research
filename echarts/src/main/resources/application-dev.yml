@@ -1,2 +1,7 @@
 spring:
   profiles: dev
+  elasticsearch:
+    rest:
+      uris: 192.168.10.128:9200,192.168.10.129:9200,192.168.10.130:9200
+      connection-timeout: 5s
+      read-timeout: 30s
