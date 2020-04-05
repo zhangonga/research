@@ -79,6 +79,11 @@ public class EsCURDTest {
         esCURD.maxQuery(transportClient);
     }
 
+    @Test
+    public void testAvgQuery(){
+        esCURD.avgQuery(transportClient);
+    }
+
     @After
     public void testAfter() {
         transportClient.close();

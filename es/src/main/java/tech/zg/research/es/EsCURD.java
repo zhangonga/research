@@ -19,8 +19,12 @@ import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
+import org.elasticsearch.search.aggregations.metrics.avg.AvgAggregationBuilder;
+import org.elasticsearch.search.aggregations.metrics.avg.InternalAvg;
 import org.elasticsearch.search.aggregations.metrics.max.InternalMax;
 import org.elasticsearch.search.aggregations.metrics.max.MaxAggregationBuilder;
+import org.elasticsearch.search.aggregations.metrics.sum.InternalSum;
+import org.elasticsearch.search.aggregations.metrics.sum.SumAggregationBuilder;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -188,5 +192,36 @@ public class EsCURD {
             double max = ages.getValue();
             System.out.println(team + " : " + max);
         }
+    }
+
+    /**
+     * select team, avg(age) as avg_age, sum(salary) as total_salary from player group by team;
+     * select team, avg(age) as avg_age, sum(salary) as total_salary from player group by team order by total_salary desc;
+     *
+     * @param transportClient
+     */
+    public void avgQuery(TransportClient transportClient) {
+        SearchRequestBuilder builder = transportClient.prepareSearch("player_info").setTypes("player");
+        TermsAggregationBuilder teamAgg = AggregationBuilders.terms("team").field("team");
+        //TermsAggregationBuilder teamAgg = AggregationBuilders.terms("team").field("team").order(Terms.Order);
+        AvgAggregationBuilder avgAgeAgg = AggregationBuilders.avg("avg_age").field("age");
+        SumAggregationBuilder sumSalaryAgg = AggregationBuilders.sum("total_salary").field("salary");
+        builder.addAggregation(teamAgg.subAggregation(avgAgeAgg).subAggregation(sumSalaryAgg));
+
+        SearchResponse searchResponse = builder.execute().actionGet();
+
+        Map<String, Aggregation> aggMap = searchResponse.getAggregations().getAsMap();
+        StringTerms teamTerms = (StringTerms) aggMap.get("team");
+
+        for (Terms.Bucket teamBucket : teamTerms.getBuckets()) {
+            String team = (String) teamBucket.getKey();
+            Map<String, Aggregation> avgAgeMap = teamBucket.getAggregations().getAsMap();
+            InternalAvg internalAvg = (InternalAvg) avgAgeMap.get("avg_age");
+            InternalSum internalSum = (InternalSum) avgAgeMap.get("total_salary");
+            double avg = internalAvg.getValue();
+            double totalSalary = internalSum.getValue();
+            System.out.println(team + " " + avg + " " + totalSalary);
+        }
+
     }
 }
