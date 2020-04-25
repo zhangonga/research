@@ -56,6 +56,9 @@ public class Server {
         } catch (InterruptedException e) {
             log.info("启动服务器异常：{}", e.getMessage());
             e.printStackTrace();
+        }finally {
+            boss.shutdownGracefully();
+            work.shutdownGracefully();
         }
     }
 
