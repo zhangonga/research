@@ -31,6 +31,9 @@ public class Server {
                         // 这里每次连接都能获取到客户端的 channel， 这里就可以给用户一个标记和 channel 做一个标记，可以用来给用户推送消息
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
+                            // inBound 顺序执行
+                            // inBound 逆序执行
+                            // 最后一个要是 inBound
                             socketChannel.pipeline().addLast(new ServerHandler());
                         }
                     });
