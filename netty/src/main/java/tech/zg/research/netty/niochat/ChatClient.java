@@ -76,7 +76,7 @@ public class ChatClient {
     }
 
     public static void main(String[] args) {
-        ChatClient chatClient = ChatClient.open("127.0.0.1", 6666);
+        ChatClient chatClient = ChatClient.open("127.0.0.1", 8888);
         if (chatClient == null) {
             log.info("启动失败");
         }

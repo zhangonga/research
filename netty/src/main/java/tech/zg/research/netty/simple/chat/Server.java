@@ -6,7 +6,12 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
+import io.netty.handler.timeout.IdleStateHandler;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class Server {
@@ -28,12 +33,16 @@ public class Server {
                     .option(ChannelOption.SO_BACKLOG, 128)
                     .childOption(ChannelOption.SO_KEEPALIVE, true)
                     .channel(NioServerSocketChannel.class)
+                    .handler(new LoggingHandler(LogLevel.INFO))
                     .childHandler(new ChannelInitializer() {
                         @Override
                         protected void initChannel(Channel channel) throws Exception {
                             // inBound 顺序执行
                             // inBound 逆序执行
                             // 最后一个要是 inBound
+                            // idleStateHandler 心跳机制，如果超过配置的时间没有读写，则发送IdleStateEvent 事件给下一个handler， 下一个handler 的 userEventTriggered 方法接收到并处理
+                            channel.pipeline().addLast(new IdleStateHandler(10, 10, 20, TimeUnit.SECONDS));
+                            channel.pipeline().addLast(new HeartHandler());
                             channel.pipeline().addLast(new StringDecoder());
                             channel.pipeline().addLast(new StringEncoder());
                             channel.pipeline().addLast(new ServerHandler());
