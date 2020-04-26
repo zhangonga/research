@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>wst</title>
+</head>
+<body>
+<form onsubmit="return false">
+    <textarea name="message" style="height: 300px; width: 300px"></textarea>
+    <input type="button" value="发送消息" onclick="messageSend(this.form.message.value)">
+
+    <textarea name="messageR" id="messageR" style="height: 300px; width: 300px"></textarea>
+    <input type="button" value="清空内容" onclick="document.getElementById('messageR').value = ''">
+</form>
+</body>
+<script>
+    var socket;
+    // 判断是否支持 ws
+    if (window.WebSocket) {
+        socket = new WebSocket("ws://127.0.0.1:8888/wst")
+        // 接收消息函数
+        socket.onmessage = function (ev) {
+            var element = document.getElementById("messageR");
+            element.value = element.value + "\n" + ev.data;
+        };
+        // 连接开启
+        socket.onopen = function (ev) {
+            var element = document.getElementById("messageR");
+            element.value = "连接开启";
+        };
+        // 连接关闭
+        socket.onclose = function (ev) {
+            var element = document.getElementById("messageR");
+            element.value = element.value + "\n" + "连接关闭";
+        };
+        socket.send()
+    } else {
+        alert("不支持WS")
+    }
+
+    // 发送消息
+    function messageSend(message) {
+        if (!window.socket) {
+            alert("未连接！");
+        } else {
+            if (socket.readyState == WebSocket.OPEN) {
+                socket.send(message);
+            } else {
+                alert("ws 异常");
+            }
+        }
+    }
+</script>
+</html>
