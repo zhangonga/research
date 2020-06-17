@@ -41,5 +41,6 @@
         <module>echarts</module>
         <module>es</module>
         <module>netty</module>
+        <module>jdk</module>
     </modules>
 </project>
