@@ -42,5 +42,6 @@
         <module>es</module>
         <module>netty</module>
         <module>jdk</module>
+        <module>flink</module>
     </modules>
 </project>
